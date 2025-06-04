@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class MoveControl : StateMachineBehaviour
+public class MoveController : StateMachineBehaviour
 {
     private AgentCharacter _character;
 

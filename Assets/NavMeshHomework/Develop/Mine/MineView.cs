@@ -4,15 +4,17 @@ using UnityEngine;
 
 public class MineView : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [SerializeField] private ParticleSystem _explosionEffect;
 
-    // Update is called once per frame
-    void Update()
+    [SerializeField] private GameObject _mineGameObject;
+
+    public ParticleSystem ExplosionEffect => _explosionEffect;
+    
+
+    public void Explode()
     {
-        
+        _mineGameObject.SetActive(false);
+        _explosionEffect.gameObject.SetActive(true);
+        _explosionEffect.Play();
     }
 }

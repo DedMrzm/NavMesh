@@ -6,10 +6,10 @@ using UnityEngine;
 public class Mine : MonoBehaviour
 {
     [SerializeField] private float _radius;
-
     [SerializeField] private float _timeBeforeExplosion;
-
     [SerializeField] private float _damage;
+
+    [SerializeField] MineView _mineView;
 
     private SphereCollider _collider;
 
@@ -31,7 +31,9 @@ public class Mine : MonoBehaviour
             _timer += Time.deltaTime;
             if(_timer > _timeBeforeExplosion)
             {
+                _mineView.Explode();
                 Explode();
+                _isStartExplode = false;
             }
         }
     }
@@ -65,11 +67,12 @@ public class Mine : MonoBehaviour
             damagableObject.TakeDamage(_damage);
         }
 
-        Destroy(gameObject);
+        Destroy(gameObject, _mineView.ExplosionEffect.main.duration);
     }
 
     private void OnDrawGizmos()
     {
-        
+        Gizmos.color = Color.red;
+        Gizmos.DrawSphere(gameObject.transform.position, _radius);
     }
 }

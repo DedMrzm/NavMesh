@@ -44,7 +44,8 @@ public class ToPointAgentMover
             }
         }
 
-        ShowOrHidePointer();
+        if(_isGameStarted)
+            ShowOrHidePointer();
     }
 
     public void SetDestination(Vector3 position)

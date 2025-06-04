@@ -28,7 +28,7 @@ public class CharacterView : MonoBehaviour
 
     private void Awake()
     {
-        _animator.SetFloat(HealthKey, _character.CurrentHealth);
+        _animator.SetFloat(HealthKey, _character.MaxHealth);
     }
 
     private void Update()
