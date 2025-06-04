@@ -3,7 +3,7 @@ using UnityEngine.AI;
 
 public class ToPointAgentMover
 {
-    private const float ShowPointerValue = 0.5f;
+    private const float ShowPointerValue = 1f;
     private readonly Vector3 PointerOffset = new Vector3(0, 0.15f, 0);
 
     private const KeyCode CastPointKey = KeyCode.Mouse0;
@@ -37,13 +37,14 @@ public class ToPointAgentMover
 
             if (Physics.Raycast(cameraRay, out RaycastHit hit, Mathf.Infinity, _layerMask.value))
             {
-                ShowOrHidePointer();
-                _pointerForCurrentPoint.transform.position = hit.point + PointerOffset;
+                _pointerForCurrentPoint.transform.position = hit.point;
 
                 _isGameStarted = true;
                 CurrentPoint = hit.point;
             }
         }
+
+        ShowOrHidePointer();
     }
 
     public void SetDestination(Vector3 position)
