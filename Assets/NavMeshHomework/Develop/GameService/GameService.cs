@@ -3,12 +3,13 @@ using UnityEngine;
 public class GameService : MonoBehaviour
 {
     [SerializeField] private AgentCharacter _character;
+    [SerializeField] private LayerMask _walkableArea;
 
-    private MMOController _characterController;
+    private Controller _characterController;
 
     private void Awake()
     {
-        _characterController = new MMOController(_character);
+        _characterController = new ToPointByMouseAgentController(_character, _walkableArea);
 
         _characterController.Enable();
     }

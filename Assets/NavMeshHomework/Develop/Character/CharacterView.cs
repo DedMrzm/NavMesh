@@ -16,16 +16,6 @@ public class CharacterView : MonoBehaviour
     [SerializeField] private AgentCharacter _character;
     [SerializeField] private Animator _animator;
 
-    public States CurrentState = States.Idle;
-
-    public enum States
-    {
-        Idle,
-        Move,
-        TakeDamage,
-        Dead
-    }
-
     private void Awake()
     {
         _animator.SetFloat(HealthKey, _character.MaxHealth);
@@ -33,44 +23,35 @@ public class CharacterView : MonoBehaviour
 
     private void Update()
     {
-        ControlAnimations();
 
         if (_character.IsAlive == false)
         {
-            CurrentState = States.Dead;
             return;
         }
 
         if(_character.CurrentVelocity.magnitude > MinimumMoveSpeedValue)
         {
-            CurrentState = States.Move;
+            StartRunning();
         }
         else
         {
-            CurrentState = States.Idle;
+            StopRunning();
         }
     }
-
-    private void ControlAnimations()
+    private void StartRunning()
     {
-        switch(CurrentState)
-        {
-            case States.Idle:
-                _animator.SetBool(IsRunningKey, false);
-                break;
+        _animator.SetBool(IsRunningKey, true);
+    }
+    
+    private void StopRunning()
+    {
+        _animator.SetBool(IsRunningKey, false);
+    }
 
-            case States.Move:
-                _animator.SetBool(IsRunningKey, true);
-                break;
-
-            case States.TakeDamage:
-                AnimateTakeDamage();
-                break;
-
-            case States.Dead:
-                _animator.SetFloat(HealthKey, 0f);
-                break;
-        }
+    public void StartTakingDamage(float currentHealth)
+    {
+        _animator.SetFloat(HealthKey, currentHealth);
+        _animator.SetTrigger(TakeDamageKey);
     }
 
     private void SetAnimationLayer(int indexOfLayer)
