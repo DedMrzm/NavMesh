@@ -10,6 +10,7 @@ public class AgentCharacter : MonoBehaviour, IDamagable
     private Health _health;
     private DirectionalRotator _rotator;
 
+    private AgentJumper _jumper;
 
     [SerializeField] private CharacterView _characterView;
 
@@ -19,12 +20,18 @@ public class AgentCharacter : MonoBehaviour, IDamagable
     [SerializeField] private float _moveSpeed;
     [SerializeField] private float _rotationSpeed;
 
+    [SerializeField] private float _jumpSpeed;
+
+    [SerializeField] private AnimationCurve _jumpCurve;
+
     public float CurrentHealth => _currentHealth;
     public float MaxHealth => _maxHealth;
 
     public Vector3 CurrentVelocity => _agent.desiredVelocity;
 
     public Vector3 CurrentPointToGo => _agent.destination;
+
+    public bool InJumpProcess => _jumper.InProcess;
 
     public bool IsAlive { 
         get 
@@ -39,6 +46,7 @@ public class AgentCharacter : MonoBehaviour, IDamagable
         _agent.acceleration = 999;
         _agent.updateRotation = false;
 
+        _jumper = new AgentJumper(_jumpSpeed, _agent, this, _jumpCurve);
         _rotator = new DirectionalRotator(_rotationSpeed, transform);
         _health = new Health(_maxHealth);
     }
@@ -70,4 +78,17 @@ public class AgentCharacter : MonoBehaviour, IDamagable
     {
         _agent.isStopped = false;
     }
+
+    public bool IsOnNavMeshLink(out OffMeshLinkData offMeshLinkData)
+    {
+        if (_agent.isOnOffMeshLink)
+        {
+            offMeshLinkData = _agent.currentOffMeshLinkData;
+            return true;
+        }
+
+        offMeshLinkData = default(OffMeshLinkData); 
+        return false;
+    }
+    public void Jump(OffMeshLinkData offMeshLinkData) => _jumper.Jump(offMeshLinkData);
 }

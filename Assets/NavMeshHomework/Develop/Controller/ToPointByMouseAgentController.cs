@@ -19,6 +19,18 @@ public class ToPointByMouseAgentController : Controller
 
     protected override void UpdateLogic(float deltaTime)
     {
+        if(_character.IsOnNavMeshLink(out OffMeshLinkData offMeshLinkData))
+        {
+            if(_character.InJumpProcess == false)
+            {
+                _character.SetRotationDirection(offMeshLinkData.endPos - offMeshLinkData.startPos);
+
+                _character.Jump(offMeshLinkData);
+            }
+
+            return;
+        }
+
         _character.SetRotationDirection(_character.CurrentVelocity);
         if (Input.GetKeyDown(CastPointKey))
         {
