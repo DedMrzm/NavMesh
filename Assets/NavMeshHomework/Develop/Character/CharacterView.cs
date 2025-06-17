@@ -12,12 +12,14 @@ public class CharacterView : MonoBehaviour
     private const string IsRunningKey = "IsRunning";
     private const string HealthKey = "Health";
     private const string TakeDamageKey = "TakeDamage";
+    private const string InJumpProcessKey = "InJumpProcess";
 
     [SerializeField] private AgentCharacter _character;
     [SerializeField] private Animator _animator;
 
     private void Awake()
     {
+        Debug.Log("Set health");
         _animator.SetFloat(HealthKey, _character.MaxHealth);
     }
 
@@ -28,8 +30,10 @@ public class CharacterView : MonoBehaviour
         {
             return;
         }
+        
+        _animator.SetBool(InJumpProcessKey, _character.InJumpProcess);
 
-        if(_character.CurrentVelocity.magnitude > MinimumMoveSpeedValue)
+        if (_character.CurrentVelocity.magnitude > MinimumMoveSpeedValue)
         {
             StartRunning();
         }
@@ -52,19 +56,11 @@ public class CharacterView : MonoBehaviour
     {
         _animator.SetFloat(HealthKey, currentHealth);
         _animator.SetTrigger(TakeDamageKey);
+
+        if (currentHealth / _character.MaxHealth * 100 < InjuredLayerValue)
+            SetAnimationLayer(InjuredLayerIndex);
     }
 
     private void SetAnimationLayer(int indexOfLayer)
         => _animator.SetLayerWeight(indexOfLayer, 1f);
-
-    private void AnimateTakeDamage()
-    {
-        _animator.SetFloat(HealthKey, _character.CurrentHealth);
-        _animator.SetTrigger(TakeDamageKey);
-
-        if (_character.CurrentHealth / _character.MaxHealth * 100 < InjuredLayerValue)
-        {
-            SetAnimationLayer(InjuredLayerIndex);
-        }
-    }
 }

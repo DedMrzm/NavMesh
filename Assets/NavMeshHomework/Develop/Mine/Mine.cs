@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,29 +14,13 @@ public class Mine : MonoBehaviour
 
     private SphereCollider _collider;
 
-    private bool _isStartExplode;
-    private float _timer;
-
-    private List<IDamagable> _damagablesObjects = new List<IDamagable>();
+    public bool IsTimerStarted = false;
+    public bool IsStartExplode = false;
 
     private void Awake()
     {
         _collider = GetComponent<SphereCollider>();
         _collider.radius = _radius;
-    }
-
-    private void Update()
-    {
-        if (_isStartExplode)
-        {
-            _timer += Time.deltaTime;
-            if(_timer > _timeBeforeExplosion)
-            {
-                _mineView.Explode();
-                Explode();
-                _isStartExplode = false;
-            }
-        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -46,28 +31,35 @@ public class Mine : MonoBehaviour
 
         if (other.gameObject.GetComponent<IDamagable>() != null)
         {
-            Debug.Log("ENTER DAMAGABLE");
-            _damagablesObjects.Add(damagable);
-            _isStartExplode = true;
-        }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.gameObject.GetComponent<IDamagable>() != null)
-        {
-            _damagablesObjects.Remove(other.gameObject.GetComponent<IDamagable>());
+            StartCoroutine(TimerProcess());
         }
     }
 
     private void Explode()
     {
-        foreach(IDamagable damagableObject in _damagablesObjects)
+        Collider[] targets = Physics.OverlapSphere(transform.position, _radius);    
+        
+        foreach(Collider target in targets)
         {
-            damagableObject.TakeDamage(_damage);
+            IDamagable damagable = target.GetComponent<IDamagable>();
+
+            if(damagable != null)
+            {
+                damagable.TakeDamage(_damage);
+            }
         }
 
         Destroy(gameObject, _mineView.ExplosionEffect.main.duration);
+    }
+
+    private IEnumerator TimerProcess()
+    {
+        IsTimerStarted = true;
+
+        yield return new WaitForSeconds(_timeBeforeExplosion);
+
+        IsStartExplode = true;
+        Explode();
     }
 
     private void OnDrawGizmos()
